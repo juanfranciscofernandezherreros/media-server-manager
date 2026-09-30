@@ -10,7 +10,8 @@ const SERVICE_LINKS = {
   bazarr: {port: 6767, label: "Abrir Bazarr"},
   jellyseerr: {port: 5055, label: "Abrir Jellyseerr"},
 };
-function serviceUrl(name, data) {
+function serviceUrl(name, data, service = null) {
+  if (service?.ui_url) return service.ui_url;
   if (name === "jellyfin") {
     const hostname = data?.connectivity?.remote_access?.hostname;
     return hostname ? `http://${hostname}:8096` : null;
@@ -23,6 +24,7 @@ function serviceUrl(name, data) {
 function serviceLinkLabel(name) {
   if (name === "jellyfin") return "Abrir Jellyfin";
   if (name === "tailscale") return "Abrir Tailscale";
+  if (name === "photos_app") return "Abrir Photos";
   return SERVICE_LINKS[name]?.label || "Abrir interfaz";
 }
 
@@ -85,6 +87,12 @@ const SERVICE_ICONS = {
         <circle cx="18" cy="32" r="5"/><circle cx="32" cy="32" r="5"/><circle cx="46" cy="32" r="5"/>
         <circle cx="18" cy="46" r="5"/><circle cx="32" cy="46" r="5"/><circle cx="46" cy="46" r="5"/>
       </g>
+    </svg>`,
+  photos_app: `
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="9" y="13" width="46" height="38" rx="9" fill="#35b88f"/>
+      <circle cx="24" cy="27" r="6" fill="#dffbf2"/>
+      <path d="m15 45 11-11 8 8 6-6 9 9H15Z" fill="#dffbf2"/>
     </svg>`,
   samba: `
     <svg viewBox="0 0 64 64" aria-hidden="true">
@@ -192,7 +200,7 @@ function render(data) {
     const cls = serviceClass(service);
     const status = service.health || service.status;
     const canRestart = service.name !== "docker";
-    const uiUrl = serviceUrl(service.name, data);
+    const uiUrl = serviceUrl(service.name, data, service);
     return `
       <article class="service-card ${cls}">
         <div class="service-top">
