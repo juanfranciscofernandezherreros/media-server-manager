@@ -91,6 +91,26 @@ def overview(
         (check["ok"] for check in checks if check["id"] == "vpn-isolation"),
         False,
     )
+    services_by_name = {service["name"]: service for service in services_payload}
+    gluetun = services_by_name.get("gluetun", {})
+    tailscale = services_by_name.get("tailscale", {})
+
+    connectivity = {
+        "vpn": {
+            "connected": bool(gluetun.get("running")),
+            "protected": protected,
+            "country": gluetun.get("vpn_country"),
+            "provider": gluetun.get("vpn_provider"),
+            "exit_ip": None,
+            "exit_ip_verified": False,
+        },
+        "remote_access": {
+            "active": bool(tailscale.get("running")),
+            "private": bool(tailscale.get("running")),
+            "provider": "Tailscale",
+            "hostname": tailscale.get("hostname"),
+        },
+    }
 
     return {
         "summary": {
@@ -102,6 +122,7 @@ def overview(
         "services": services_payload,
         "system": system,
         "diagnostics": checks,
+        "connectivity": connectivity,
         "refresh_seconds": settings.manager_refresh_seconds,
     }
 
