@@ -66,3 +66,32 @@ def test_vpn_exit_info_is_read_from_inside_gluetun(monkeypatch):
     assert info["country_code"] == "ES"
     assert info["city"] == "Madrid"
     assert info["organization"] == "AS123 Example VPN"
+
+
+class FakePhotosContainer:
+    name = "photos_app"
+    status = "running"
+    attrs = {
+        "State": {
+            "Status": "running",
+            "Running": True,
+            "StartedAt": "2026-09-30T10:00:00+00:00",
+            "Health": {"Status": "healthy"},
+        },
+        "RestartCount": 0,
+        "NetworkSettings": {"Ports": {"8765/tcp": [{"HostIp": "127.0.0.1", "HostPort": "8765"}]}},
+        "HostConfig": {"NetworkMode": "bridge"},
+        "Config": {"Image": "photos-sync:latest", "Env": [], "Hostname": "photos-app"},
+    }
+
+
+def test_photos_sync_payload_has_friendly_label_and_ui_url():
+    settings = Settings(photos_sync_url="http://media-host:8765")
+    manager = DockerManager(settings)
+
+    payload = manager._container_payload(FakePhotosContainer())
+
+    assert payload["name"] == "photos_app"
+    assert payload["label"] == "Photos Sync"
+    assert payload["health"] == "healthy"
+    assert payload["ui_url"] == "http://media-host:8765"
