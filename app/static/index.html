@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#07111f" />
+  <title>Media Server Manager</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">▰</span><span>Media Server<br><strong>Manager</strong></span></div>
+      <nav>
+        <button class="nav active" data-view="overview">⌂ <span>Resumen</span></button>
+        <button class="nav" data-view="services">▦ <span>Servicios</span></button>
+        <button class="nav" data-view="storage">◫ <span>Almacenamiento</span></button>
+        <button class="nav" data-view="security">◆ <span>Seguridad</span></button>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="dot" id="connection-dot"></span>
+        <span id="connection-label">Conectando…</span>
+      </div>
+    </aside>
+
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">PRIVATE HOME INFRASTRUCTURE</p>
+          <h1>Resumen</h1>
+          <p class="subtitle">Tu servidor multimedia, bajo control.</p>
+        </div>
+        <div class="header-actions">
+          <span class="pill" id="global-health">● Cargando</span>
+          <button id="refresh-btn" class="icon-button" title="Actualizar">↻</button>
+        </div>
+      </header>
+
+      <section class="hero-grid">
+        <article class="hero-card accent">
+          <div class="hero-label">ESTADO</div>
+          <div class="hero-value" id="hero-status">—</div>
+          <div class="hero-note" id="hero-services">Esperando datos</div>
+        </article>
+        <article class="hero-card">
+          <div class="hero-label">VPN</div>
+          <div class="hero-value" id="hero-vpn">—</div>
+          <div class="hero-note">Deluge → Gluetun</div>
+        </article>
+        <article class="hero-card">
+          <div class="hero-label">ALMACENAMIENTO</div>
+          <div class="hero-value" id="hero-disk">—</div>
+          <div class="hero-note" id="hero-disk-note">—</div>
+        </article>
+        <article class="hero-card">
+          <div class="hero-label">RECURSOS</div>
+          <div class="hero-value" id="hero-cpu">—</div>
+          <div class="hero-note" id="hero-ram">—</div>
+        </article>
+      </section>
+
+      <section>
+        <div class="section-title">
+          <div><h2>Servicios</h2><p>Estado real de los contenedores autorizados.</p></div>
+          <button class="secondary" id="token-btn">Configurar token de acciones</button>
+        </div>
+        <div id="services-grid" class="services-grid"></div>
+      </section>
+
+      <section class="lower-grid">
+        <article class="panel">
+          <div class="panel-heading"><div><h2>Sistema</h2><p>Recursos del host visibles para el manager.</p></div></div>
+          <div class="metrics">
+            <div class="metric"><span>CPU</span><strong id="metric-cpu">—</strong><div class="bar"><i id="bar-cpu"></i></div></div>
+            <div class="metric"><span>RAM</span><strong id="metric-ram">—</strong><div class="bar"><i id="bar-ram"></i></div></div>
+            <div class="metric"><span>Disco</span><strong id="metric-disk">—</strong><div class="bar"><i id="bar-disk"></i></div></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading"><div><h2>Diagnóstico</h2><p>Invariantes de seguridad y operación.</p></div></div>
+          <div id="diagnostics" class="checks"></div>
+        </article>
+      </section>
+
+      <section class="panel action-panel">
+        <div>
+          <h2>Acciones rápidas</h2>
+          <p>Las acciones requieren un token local y solo pueden afectar a servicios en la allowlist.</p>
+        </div>
+        <button class="primary" id="diagnose-btn">Ejecutar diagnóstico</button>
+      </section>
+
+      <footer>
+        <span>Media Server Manager v0.1.0</span>
+        <span id="updated-at">Sin actualizar</span>
+      </footer>
+    </main>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
