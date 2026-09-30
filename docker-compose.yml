@@ -1,0 +1,19 @@
+services:
+  manager:
+    build: .
+    container_name: media-server-manager
+    environment:
+      MANAGER_API_TOKEN: ${MANAGER_API_TOKEN:-change-me}
+      MANAGER_ALLOWED_SERVICES: ${MANAGER_ALLOWED_SERVICES:-jellyfin,gluetun,deluge,sonarr,radarr,prowlarr,bazarr,jellyseerr,tailscale,samba}
+      MEDIA_ROOT: /media-root
+      DISK_WARNING_PERCENT: ${DISK_WARNING_PERCENT:-85}
+    ports:
+      - "127.0.0.1:8088:8090"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${MEDIA_SERVER_ROOT:-.}:/media-root:ro
+    group_add:
+      - "${DOCKER_GID:-999}"
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
