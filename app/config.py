@@ -7,11 +7,12 @@ class Settings(BaseSettings):
     manager_api_token: str = ""
     manager_allowed_services: str = (
         "jellyfin,gluetun,deluge,sonarr,radarr,prowlarr,bazarr,"
-        "jellyseerr,tailscale,samba"
+        "jellyseerr,tailscale,samba,photos_app"
     )
     media_root: str = "/"
     manager_refresh_seconds: int = 10
     disk_warning_percent: int = 85
+    photos_sync_url: str = "http://127.0.0.1:8765"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
