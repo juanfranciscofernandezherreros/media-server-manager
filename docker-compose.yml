@@ -8,7 +8,7 @@ services:
       MEDIA_ROOT: /media-root
       DISK_WARNING_PERCENT: ${DISK_WARNING_PERCENT:-85}
     ports:
-      - "127.0.0.1:8088:8080"
+      - "127.0.0.1:8088:8090"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${MEDIA_SERVER_ROOT:-.}:/media-root:ro
