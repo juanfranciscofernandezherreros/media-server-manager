@@ -94,6 +94,7 @@ def overview(
     services_by_name = {service["name"]: service for service in services_payload}
     gluetun = services_by_name.get("gluetun", {})
     tailscale = services_by_name.get("tailscale", {})
+    vpn_exit = docker_manager.vpn_exit_info() if gluetun.get("running") else {}
 
     connectivity = {
         "vpn": {
@@ -101,8 +102,12 @@ def overview(
             "protected": protected,
             "country": gluetun.get("vpn_country"),
             "provider": gluetun.get("vpn_provider"),
-            "exit_ip": None,
-            "exit_ip_verified": False,
+            "exit_ip": vpn_exit.get("ip"),
+            "exit_ip_verified": bool(vpn_exit.get("verified")),
+            "exit_country_code": vpn_exit.get("country_code"),
+            "exit_city": vpn_exit.get("city"),
+            "exit_organization": vpn_exit.get("organization"),
+            "exit_check_error": vpn_exit.get("error"),
         },
         "remote_access": {
             "active": bool(tailscale.get("running")),
