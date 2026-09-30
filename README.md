@@ -89,9 +89,10 @@ Por defecto el puerto se publica solo en `127.0.0.1`.
 
 ## Windows / Docker Desktop
 
-Para el servidor Windows del proyecto original, la opción más simple para el MVP
-es ejecutar el manager **directamente en el host**. Así Docker SDK usa el Docker
-Engine local y no necesitas publicar una API TCP de Docker.
+El contenedor puede ejecutarse también en Docker Desktop. Docker Desktop puede
+montar `/var/run/docker.sock` como `root:root` con permisos `0660`; el Compose
+incluye el grupo suplementario `0` para que el usuario no-root `manager` pueda
+acceder al socket sin ejecutar toda la aplicación como root.
 
 PowerShell:
 
