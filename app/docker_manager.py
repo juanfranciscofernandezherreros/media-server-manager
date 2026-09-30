@@ -56,6 +56,12 @@ class DockerManager:
                 if host_port:
                     ports.append(f"{host_ip}:{host_port}")
 
+        env = {}
+        for item in attrs.get("Config", {}).get("Env", []) or []:
+            key, separator, value = item.partition("=")
+            if separator:
+                env[key] = value
+
         return {
             "name": container.name,
             "label": SERVICE_LABELS.get(container.name, container.name.title()),
@@ -67,6 +73,11 @@ class DockerManager:
             "network_mode": attrs.get("HostConfig", {}).get("NetworkMode"),
             "published_ports": sorted(ports),
             "image": attrs.get("Config", {}).get("Image"),
+            "vpn_country": env.get("SERVER_COUNTRIES") if container.name == "gluetun" else None,
+            "vpn_provider": env.get("VPN_SERVICE_PROVIDER") if container.name == "gluetun" else None,
+            "hostname": attrs.get("Config", {}).get("Hostname")
+            if container.name == "tailscale"
+            else None,
         }
 
     def services(self) -> list[dict[str, Any]]:
@@ -91,6 +102,9 @@ class DockerManager:
                             "network_mode": None,
                             "published_ports": [],
                             "image": None,
+                            "vpn_country": None,
+                            "vpn_provider": None,
+                            "hostname": None,
                         }
                     )
             return result
@@ -128,6 +142,9 @@ class DockerManager:
                     "network_mode": None,
                     "published_ports": [],
                     "image": None,
+                    "vpn_country": None,
+                    "vpn_provider": None,
+                    "hostname": None,
                     "error": str(exc),
                 }
             )
