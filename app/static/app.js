@@ -111,6 +111,11 @@ async function api(path, options = {}) {
   }
   return response.json();
 }
+function countryFlag(country) {
+  const normalized = String(country || "").trim().toLowerCase();
+  if (normalized === "spain" || normalized === "españa") return "🇪🇸";
+  return "🌐";
+}
 function serviceClass(service) {
   if (!service.running) return "bad";
   if (service.health === "healthy" || service.health === "running") return "good";
@@ -135,6 +140,24 @@ function render(data) {
   $("bar-cpu").style.width = `${data.system.cpu_percent}%`;
   $("bar-ram").style.width = `${data.system.memory_percent}%`;
   $("bar-disk").style.width = `${data.system.disk_percent}%`;
+
+  const vpn = data.connectivity?.vpn || {};
+  const remote = data.connectivity?.remote_access || {};
+  $("vpn-status").textContent = vpn.connected ? "VPN conectada" : "VPN no conectada";
+  $("vpn-status").className = `network-status ${vpn.connected ? "ok" : "bad"}`;
+  $("vpn-country").textContent = vpn.country ? `${countryFlag(vpn.country)} ${vpn.country}` : "—";
+  $("vpn-provider").textContent = vpn.provider || "—";
+  $("vpn-protected").textContent = vpn.protected ? "Sí" : "No";
+  $("vpn-protected").className = vpn.protected ? "value-ok" : "value-bad";
+  $("vpn-exit-ip").textContent = vpn.exit_ip_verified && vpn.exit_ip ? vpn.exit_ip : "No verificada";
+
+  $("remote-status").textContent = remote.active ? "Acceso remoto activo" : "Acceso remoto no disponible";
+  $("remote-status").className = `network-status ${remote.active ? "ok" : "bad"}`;
+  $("remote-tailscale").textContent = remote.active ? "Activo" : "Inactivo";
+  $("remote-tailscale").className = remote.active ? "value-ok" : "value-bad";
+  $("remote-private").textContent = remote.private ? "Privada y cifrada" : "No disponible";
+  $("remote-private").className = remote.private ? "value-ok" : "value-bad";
+  $("remote-hostname").textContent = remote.hostname || "—";
 
   $("services-grid").innerHTML = data.services.map(service => {
     const cls = serviceClass(service);
