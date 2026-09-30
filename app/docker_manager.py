@@ -95,7 +95,28 @@ class DockerManager:
                     )
             return result
         except DockerException as exc:
-            return [
+            # Keep the complete service grid visible even when Docker is temporarily
+            # unavailable. This avoids collapsing the UI to a single Docker card and
+            # makes it obvious which services the manager expects to control.
+            result: list[dict[str, Any]] = []
+            for name in sorted(self.settings.allowed_services):
+                result.append(
+                    {
+                        "name": name,
+                        "label": SERVICE_LABELS.get(name, name.title()),
+                        "status": "docker-unavailable",
+                        "running": False,
+                        "health": "unavailable",
+                        "restart_count": 0,
+                        "uptime_seconds": None,
+                        "network_mode": None,
+                        "published_ports": [],
+                        "image": None,
+                        "error": str(exc),
+                    }
+                )
+
+            result.append(
                 {
                     "name": "docker",
                     "label": "Docker Engine",
@@ -109,7 +130,8 @@ class DockerManager:
                     "image": None,
                     "error": str(exc),
                 }
-            ]
+            )
+            return result
 
     def restart(self, service: str) -> dict[str, str]:
         if service not in self.settings.allowed_services:
