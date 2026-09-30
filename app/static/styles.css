@@ -50,3 +50,11 @@ main{padding:36px clamp(24px,4vw,58px);max-width:1500px;width:100%;margin:0 auto
 .value-ok{color:var(--green)}
 .value-bad{color:var(--red)}
 @media(max-width:760px){.network-grid{grid-template-columns:1fr}}
+
+section[id],main[id]{scroll-margin-top:24px}
+.service-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.open-ui,.restart{display:inline-flex;align-items:center;justify-content:center;min-height:30px}
+.open-ui{padding:5px 9px;border:1px solid #285b92;background:#0d2238;color:#78baff;border-radius:7px;font-size:11px;font-weight:700;text-decoration:none}
+.open-ui:hover{border-color:#4b8fd8;background:#102b47;color:#b9dbff}
+.no-ui{font-size:11px;color:#5f7085}
+.restart{margin-top:0}
