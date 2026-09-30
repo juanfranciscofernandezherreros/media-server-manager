@@ -23,6 +23,7 @@ SERVICE_LABELS = {
     "jellyseerr": "Jellyseerr",
     "tailscale": "Tailscale",
     "samba": "Samba",
+    "photos_app": "Photos Sync",
 }
 
 
@@ -84,6 +85,7 @@ class DockerManager:
             "hostname": attrs.get("Config", {}).get("Hostname")
             if container.name == "tailscale"
             else None,
+            "ui_url": self.settings.photos_sync_url if container.name == "photos_app" else None,
         }
 
     def services(self) -> list[dict[str, Any]]:
@@ -111,6 +113,7 @@ class DockerManager:
                             "vpn_country": None,
                             "vpn_provider": None,
                             "hostname": None,
+                            "ui_url": self.settings.photos_sync_url if name == "photos_app" else None,
                         }
                     )
             return result
@@ -151,6 +154,7 @@ class DockerManager:
                     "vpn_country": None,
                     "vpn_provider": None,
                     "hostname": None,
+                    "ui_url": None,
                     "error": str(exc),
                 }
             )
