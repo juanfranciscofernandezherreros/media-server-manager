@@ -10,8 +10,10 @@ services:
     ports:
       - "127.0.0.1:8088:8080"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock
       - ${MEDIA_SERVER_ROOT:-.}:/media-root:ro
+    group_add:
+      - "${DOCKER_GID:-999}"
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
