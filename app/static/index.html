@@ -67,6 +67,42 @@
         <div id="services-grid" class="services-grid"></div>
       </section>
 
+      <section class="network-grid">
+        <article class="panel network-panel">
+          <div class="network-heading">
+            <div class="network-icon shield">◆</div>
+            <div>
+              <h2>VPN y red</h2>
+              <p>Salida de Internet protegida por Gluetun.</p>
+            </div>
+          </div>
+          <div class="network-status" id="vpn-status">Comprobando…</div>
+          <div class="network-list">
+            <div><span>Salida VPN</span><strong id="vpn-country">—</strong></div>
+            <div><span>Proveedor</span><strong id="vpn-provider">—</strong></div>
+            <div><span>Deluge protegido</span><strong id="vpn-protected">—</strong></div>
+            <div><span>IP de salida</span><strong id="vpn-exit-ip">No verificada</strong></div>
+          </div>
+        </article>
+
+        <article class="panel network-panel">
+          <div class="network-heading">
+            <div class="network-icon remote">⌁</div>
+            <div>
+              <h2>Acceso remoto privado</h2>
+              <p>Acceso al servidor mediante Tailscale.</p>
+            </div>
+          </div>
+          <div class="network-status" id="remote-status">Comprobando…</div>
+          <div class="network-list">
+            <div><span>Tailscale</span><strong id="remote-tailscale">—</strong></div>
+            <div><span>Conexión</span><strong id="remote-private">—</strong></div>
+            <div><span>Hostname</span><strong id="remote-hostname">—</strong></div>
+            <div><span>Acceso</span><strong>Solo red privada</strong></div>
+          </div>
+        </article>
+      </section>
+
       <section class="lower-grid">
         <article class="panel">
           <div class="panel-heading"><div><h2>Sistema</h2><p>Recursos del host visibles para el manager.</p></div></div>
