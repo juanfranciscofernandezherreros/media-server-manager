@@ -2,6 +2,31 @@ const state = { overview: null, token: localStorage.getItem("managerToken") || "
 
 const $ = (id) => document.getElementById(id);
 
+const SERVICE_LINKS = {
+  deluge: {port: 8112, label: "Abrir Deluge"},
+  sonarr: {port: 8989, label: "Abrir Sonarr"},
+  radarr: {port: 7878, label: "Abrir Radarr"},
+  prowlarr: {port: 9696, label: "Abrir Prowlarr"},
+  bazarr: {port: 6767, label: "Abrir Bazarr"},
+  jellyseerr: {port: 5055, label: "Abrir Jellyseerr"},
+};
+function serviceUrl(name, data) {
+  if (name === "jellyfin") {
+    const hostname = data?.connectivity?.remote_access?.hostname;
+    return hostname ? `http://${hostname}:8096` : null;
+  }
+  if (name === "tailscale") return "https://login.tailscale.com/admin/machines";
+  const config = SERVICE_LINKS[name];
+  if (!config) return null;
+  return `http://127.0.0.1:${config.port}`;
+}
+function serviceLinkLabel(name) {
+  if (name === "jellyfin") return "Abrir Jellyfin";
+  if (name === "tailscale") return "Abrir Tailscale";
+  return SERVICE_LINKS[name]?.label || "Abrir interfaz";
+}
+
+
 const SERVICE_ICONS = {
   jellyfin: `
     <svg viewBox="0 0 64 64" aria-hidden="true">
@@ -163,6 +188,7 @@ function render(data) {
     const cls = serviceClass(service);
     const status = service.health || service.status;
     const canRestart = service.name !== "docker";
+    const uiUrl = serviceUrl(service.name, data);
     return `
       <article class="service-card ${cls}">
         <div class="service-top">
@@ -177,7 +203,10 @@ function render(data) {
           </div>
         </div>
         <div class="service-meta">${service.running ? `uptime ${fmtUptime(service.uptime_seconds)} · reinicios ${service.restart_count}` : escapeHtml(service.status)}</div>
-        ${canRestart ? `<button class="restart" data-restart="${escapeHtml(service.name)}">Reiniciar</button>` : ""}
+        <div class="service-actions">
+          ${uiUrl ? `<a class="open-ui" href="${escapeHtml(uiUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(serviceLinkLabel(service.name))} ↗</a>` : `<span class="no-ui">Sin interfaz web</span>`}
+          ${canRestart ? `<button class="restart" data-restart="${escapeHtml(service.name)}">Reiniciar</button>` : ""}
+        </div>
       </article>`;
   }).join("");
 
@@ -246,3 +275,13 @@ $("token-btn").addEventListener("click", () => {
 });
 refresh();
 setInterval(refresh, 10000);
+
+document.querySelectorAll(".nav[data-view]").forEach(button => {
+  button.addEventListener("click", () => {
+    const target = document.getElementById(button.dataset.view);
+    if (!target) return;
+    document.querySelectorAll(".nav").forEach(item => item.classList.remove("active"));
+    button.classList.add("active");
+    target.scrollIntoView({behavior: "smooth", block: "start"});
+  });
+});
