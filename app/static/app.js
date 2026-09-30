@@ -175,6 +175,10 @@ function render(data) {
   $("vpn-protected").textContent = vpn.protected ? "Sí" : "No";
   $("vpn-protected").className = vpn.protected ? "value-ok" : "value-bad";
   $("vpn-exit-ip").textContent = vpn.exit_ip_verified && vpn.exit_ip ? vpn.exit_ip : "No verificada";
+  $("vpn-exit-ip").className = vpn.exit_ip_verified ? "value-ok" : "value-bad";
+  const exitLocation = [vpn.exit_city, vpn.exit_country_code].filter(Boolean).join(", ");
+  $("vpn-exit-location").textContent = vpn.exit_ip_verified ? (exitLocation || "Verificada") : "No verificada";
+  $("vpn-exit-org").textContent = vpn.exit_ip_verified && vpn.exit_organization ? vpn.exit_organization : "—";
 
   $("remote-status").textContent = remote.active ? "Acceso remoto activo" : "Acceso remoto no disponible";
   $("remote-status").className = `network-status ${remote.active ? "ok" : "bad"}`;
