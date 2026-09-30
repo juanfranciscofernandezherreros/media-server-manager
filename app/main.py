@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -17,6 +18,16 @@ app = FastAPI(
     title="Media Server Manager",
     version="0.1.0",
     description="Dashboard local para observar y operar de forma segura un media server.",
+)
+
+# Cordova Android serves its local shell from localhost. Restrict CORS to
+# those local app origins instead of allowing arbitrary websites.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://localhost", "http://localhost"],
+    allow_credentials=False,
+    allow_methods=["GET"],
+    allow_headers=["*"],
 )
 
 
