@@ -12,7 +12,7 @@ aislado detrás de Gluetun?, ¿Tailscale está activo?, ¿cuánta capacidad qued
 
 - dashboard web responsive;
 - estado real de Jellyfin, Gluetun, Deluge, Sonarr, Radarr, Prowlarr, Bazarr,
-  Jellyseerr, Tailscale y Samba;
+  Jellyseerr, Tailscale, Samba y Photos Sync;
 - health, uptime, reinicios, imagen, modo de red y puertos publicados;
 - CPU, RAM, disco y temperatura cuando el host la expone;
 - diagnóstico de exposición de puertos, aislamiento Deluge/Gluetun, Tailscale,
@@ -40,6 +40,7 @@ Media Server Manager :8088
                             ├─ Sonarr / Radarr
                             ├─ Prowlarr / Bazarr
                             ├─ Jellyseerr
+                            ├─ Photos Sync
                             └─ Tailscale / Samba
 ```
 
@@ -128,7 +129,18 @@ El backend no acepta nombres arbitrarios para controlar Docker. Solo permite los
 definidos en:
 
 ```env
-MANAGER_ALLOWED_SERVICES=jellyfin,gluetun,deluge,sonarr,radarr,prowlarr,bazarr,jellyseerr,tailscale,samba
+MANAGER_ALLOWED_SERVICES=jellyfin,gluetun,deluge,sonarr,radarr,prowlarr,bazarr,jellyseerr,tailscale,samba,photos_app
+```
+
+### Photos Sync
+
+Photos Sync se gestiona como un servicio de primera clase mediante su contenedor
+`photos_app`. Su estado de health procede del `HEALTHCHECK` del propio contenedor,
+que consulta el endpoint `/health` de Photos Sync. La URL del botón **Abrir Photos**
+se configura independientemente:
+
+```env
+PHOTOS_SYNC_URL=http://127.0.0.1:8765
 ```
 
 ## API
