@@ -19,3 +19,15 @@ main{padding:36px clamp(24px,4vw,58px);max-width:1500px;width:100%;margin:0 auto
 @media(max-width:1050px){.services-grid{grid-template-columns:repeat(3,1fr)}.hero-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){.shell{display:block}.sidebar{height:auto;position:relative;border-right:0;border-bottom:1px solid var(--line);padding:15px}.brand{margin:0 0 14px}nav{grid-template-columns:repeat(4,1fr)}.nav{text-align:center}.nav span{display:none}.sidebar-footer{display:none}main{padding:24px 16px}.services-grid{grid-template-columns:repeat(2,1fr)}.lower-grid{grid-template-columns:1fr}.action-panel{align-items:flex-start;gap:16px;flex-direction:column}}
 @media(max-width:480px){.hero-grid,.services-grid{grid-template-columns:1fr}header{align-items:flex-start;gap:15px}.header-actions{flex-direction:column;align-items:flex-end}}
+
+.service-top{align-items:center}
+.service-identity{display:flex;align-items:center;gap:12px;min-width:0}
+.service-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#13243a,#0a1422);border:1px solid #263a52;box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 6px 18px rgba(0,0,0,.16)}
+.service-icon svg{width:30px;height:30px;display:block}
+.service-icon-gluetun{background:linear-gradient(145deg,#102b26,#0a1715);border-color:#1d5a4d}
+.service-icon-jellyfin{background:linear-gradient(145deg,#201848,#0b1830);border-color:#3c4f8d}
+.service-icon-deluge{background:linear-gradient(145deg,#102747,#0a1628);border-color:#285b92}
+.service-icon-prowlarr{background:linear-gradient(145deg,#3d2410,#1b140b);border-color:#784516}
+.service-icon-jellyseerr{background:linear-gradient(145deg,#2c2149,#171128);border-color:#604a8d}
+.service-name{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status{margin-top:4px}
