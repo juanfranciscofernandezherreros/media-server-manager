@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from ipaddress import ip_address
+import json
+from time import monotonic
 from typing import Any
 
 import docker
@@ -24,6 +27,9 @@ SERVICE_LABELS = {
 
 
 class DockerManager:
+    _vpn_exit_cache: dict[str, Any] | None = None
+    _vpn_exit_cache_at: float = 0.0
+    _vpn_exit_cache_ttl_seconds = 60.0
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
 
@@ -149,6 +155,68 @@ class DockerManager:
                 }
             )
             return result
+
+
+    def vpn_exit_info(self, force: bool = False) -> dict[str, Any]:
+        now = monotonic()
+        cached = type(self)._vpn_exit_cache
+        cache_age = now - type(self)._vpn_exit_cache_at
+        if not force and cached is not None and cache_age < self._vpn_exit_cache_ttl_seconds:
+            return cached.copy()
+
+        info: dict[str, Any] = {
+            "verified": False,
+            "ip": None,
+            "country_code": None,
+            "city": None,
+            "organization": None,
+            "error": None,
+        }
+
+        try:
+            container = self._client().containers.get("gluetun")
+            container.reload()
+            if not container.attrs.get("State", {}).get("Running"):
+                info["error"] = "Gluetun no está en ejecución"
+            else:
+                command = [
+                    "sh",
+                    "-c",
+                    (
+                        "if command -v wget >/dev/null 2>&1; then "
+                        "wget -qO- -T 8 https://ipinfo.io/json; "
+                        "elif command -v curl >/dev/null 2>&1; then "
+                        "curl -fsS --max-time 8 https://ipinfo.io/json; "
+                        "else exit 127; fi"
+                    ),
+                ]
+                result = container.exec_run(command)
+                output = result.output.decode("utf-8", errors="replace").strip()
+
+                if result.exit_code != 0:
+                    info["error"] = "No se pudo consultar la IP pública desde Gluetun"
+                else:
+                    payload = json.loads(output)
+                    public_ip = str(payload.get("ip") or "").strip()
+                    if public_ip:
+                        ip_address(public_ip)
+                        info.update(
+                            {
+                                "verified": True,
+                                "ip": public_ip,
+                                "country_code": payload.get("country"),
+                                "city": payload.get("city"),
+                                "organization": payload.get("org"),
+                            }
+                        )
+                    else:
+                        info["error"] = "La respuesta no incluía una IP pública"
+        except (DockerException, NotFound, ValueError, json.JSONDecodeError) as exc:
+            info["error"] = str(exc)
+
+        type(self)._vpn_exit_cache = info.copy()
+        type(self)._vpn_exit_cache_at = now
+        return info
 
     def restart(self, service: str) -> dict[str, str]:
         if service not in self.settings.allowed_services:
